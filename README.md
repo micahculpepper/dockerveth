@@ -14,7 +14,10 @@ d07a2979e69a	vethe4c3cee	silly_meitner
 
 # Requirements
 
-- ?
+- Linux
+- Docker
+- The `ip` commands (you know, the ones that superseded `ifconfig`?)
+- A POSIX compliant shell at `/bin/sh`
 
 
 # Installation
