@@ -10,7 +10,7 @@ Show which docker containers are attached to which `veth` interfaces on your ser
 
 # Installation
 
-1. Download `dockerveth.sh <https://github.com/micahculpepper/dockerveth/raw/master/dockerveth.sh>`_ and save it
+1. Download [dockerveth.sh](https://github.com/micahculpepper/dockerveth/raw/master/dockerveth.sh) and save it
 wherever you like.
 
 2. Make sure `dockerveth.sh` is executable:
