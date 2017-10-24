@@ -40,8 +40,8 @@ ln -s "$(pwd)/dockerveth.sh" /usr/local/bin/dockerveth
 
 # Usage
 
-```bash
-"dockerveth.sh - Show which docker containers are attached to which
+```
+dockerveth.sh - Show which docker containers are attached to which
 `veth` interfaces.
 
 Usage: dockerveth.sh [DOCKER PS OPTIONS] | [-h, --help]
