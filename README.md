@@ -41,7 +41,16 @@ ln -s "$(pwd)/dockerveth.sh" /usr/local/bin/dockerveth
 # Usage
 
 ```bash
-dockerveth
-```
-_The command does not take any arguments (yet)._
+"dockerveth.sh - Show which docker containers are attached to which
+`veth` interfaces.
 
+Usage: dockerveth.sh [DOCKER PS OPTIONS] | [-h, --help]
+
+Options:
+    DOCKER PS OPTIONS   Pass any valid `docker ps` flags. Do not pass
+                        a '--format' flag.
+    -h, --help          Show this help and exit.
+
+Output:
+    If stdout is not a tty, column headers are omitted.
+```
