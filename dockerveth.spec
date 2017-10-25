@@ -15,25 +15,22 @@ BuildRoot: %{_tmppath}/%{name}-buildroot
 %{summary}
 
 %prep
-%setup
+%setup -q
 
 %build
 # Empty section.
 
 %install
-rm -rf %{buildroot}
-mkdir -p  %{buildroot}
-# in builddir
-cp -a * %{buildroot}
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+mkdir -p -m0755 $RPM_BUILD_ROOT%{_bindir}
+install -m 0755 dockerveth $RPM_BUILD_ROOT%{_bindir}/
 
 %check
 # Empty section.
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-mkdir -p -m0755 $RPM_BUILD_ROOT%{_bindir}
 
-install -m 0755 dockerveth $RPM_BUILD_ROOT%{_bindir}/
 
 %files
 %defattr(-,root,root,-)
