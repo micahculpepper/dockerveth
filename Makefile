@@ -1,27 +1,30 @@
 name := dockerveth
 version := $(shell grep '^Version:' SPECS/dockerveth.spec | awk '{print $$2}')
-author := $(shell printf "$$(git config --get user.name) <$$(git config --get user.email)>")
+commit = $(shell git rev-parse HEAD)
+gpg_id = $(shell git config --get user.signingkey)
+here = $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-.phony: clean all rpm
+.phony: clean all rpm rpmbuildercontainer
 
-all: rpm
+all:
 	:
 
 clean:
-	-rm -rf $(NAME)-$(VERSION)
-	-rm -rf $(NAME)-$(VERSION).tar.gz
+	-rm -rf $(name)-$(version)
+	-rm -rf $(name)-$(version).tar.gz
+	-rm -rf $(here)/rpmbuild
+
+rpm_container_build:
+	git diff-index --quiet HEAD --  # Verify there are no uncommited changes, as the commit will be recorded in the built image.
+	docker build -t dockervethrpm:$(version) --build-arg commit=$(commit) .
+	-mkdir -p rpmbuild/{RPMS,SRPMS,BUILD,SOURCES,SPECS,tmp}
+	docker run --rm -e gpg_id=$(gpg_id) -v ~/.gnupg:/home/root/.gnupg:ro -v $(here)/rpmbuild:/home/root/rpmbuild dockervethrpm:$(version)
+
 
 rpm:
-	git diff-index --quiet HEAD --  # Verify there are no uncommited changes, as the commit will be recorded in the built image.
-	docker build -t dockervethrpm:$(version) --build-arg commit=$(commit) --build-arg author=$(author) .
-	docker run dockervethrpm:$(version)
-
-rpmbuild:
-	ls -al
-#	-rm -rf $(NAME)-$(VERSION)
-#	mkdir $(NAME)-$(VERSION)
-#	mkdir -p -m0755 $(NAME)-$(VERSION)/usr/bin
-#	install -m 755 $(NAME).sh $(NAME)-$(VERSION)/usr/bin/$(NAME)
-#	tar -zcvf $(NAME)-$(VERSION).tar.gz $(NAME)-$(VERSION)
-#	cp $(NAME)-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
-#	rpmbuild -bs SPECS/$(NAME).spec
+	mkdir $(name)-$(version)
+	mkdir -p -m0755 $(name)-$(version)/usr/bin
+	install -m 755 $(name).sh $(name)-$(version)/usr/bin/$(name)
+	tar -zcvf $(name)-$(version).tar.gz $(name)-$(version)
+	cp $(name)-$(version).tar.gz $(HOME)/rpmbuild/SOURCES/
+	rpmbuild -bs SPECS/$(name).spec

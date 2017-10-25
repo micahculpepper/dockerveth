@@ -1,0 +1,6 @@
+%_signature  gpg
+%_gpg_path   %(echo $HOME)/.gnupg
+%_gpg_name   %(echo $gpg_id)
+%__gpg       %(command -v gpg)
+%_topdir     %(echo $HOME)/rpmbuild
+%_tmppath    %{_topdir}/tmp

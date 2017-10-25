@@ -31,6 +31,9 @@ cp -a * %{buildroot}
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+mkdir -p -m0755 $RPM_BUILD_ROOT%{_bindir}
+
+install -m 0755 dockerveth $RPM_BUILD_ROOT%{_bindir}/
 
 %files
 %defattr(-,root,root,-)
