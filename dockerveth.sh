@@ -20,8 +20,7 @@
 # DECLARE CONSTANTS #
 #####################
 
-NL='
-'
+NL=$'\n'
 
 ####################
 # DEFINE FUNCTIONS #
