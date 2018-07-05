@@ -16,9 +16,9 @@ clean:
 	-rm -rf $(here)/rpmbuild
 
 rpm_container_build:
-	git diff-index --quiet HEAD --  # Verify there are no uncommited changes, as the commit will be recorded in the built image.
+#	git diff-index --quiet HEAD --  # Verify there are no uncommited changes, as the commit will be recorded in the built image.
 	docker build -t dockervethrpm:$(version) --build-arg commit=$(commit) .
-	docker run --rm -e gpg_id=$(gpg_id) -v ~/.gnupg:/home/root/.gnupg:ro -v $(here)/rpmbuild:/home/root/rpmbuild dockervethrpm:$(version)
+	docker run -it --rm -e gpg_id=$(gpg_id) -v ~/.gnupg:/home/root/.gnupg:ro -v $(here)/rpmbuild:/home/root/rpmbuild dockervethrpm:$(version) bash
 
 
 rpm:
@@ -27,4 +27,4 @@ rpm:
 	install -m 755 $(name).sh $(name)-$(version)/usr/bin/$(name)
 	tar -zcvf $(name)-$(version).tar.gz $(name)-$(version)
 	cp $(name)-$(version).tar.gz $(HOME)/rpmbuild/SOURCES/
-	rpmbuild -bs $(name).spec
+	rpmbuild -ba $(name).spec

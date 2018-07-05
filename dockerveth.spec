@@ -9,32 +9,26 @@ URL: https://github.com/micahculpepper/dockerveth
 BuildArch: noarch
 Packager: Micah Culpepper <micahculpepper@gmail.com>
 
-BuildRoot: %{_tmppath}/%{name}-buildroot
-
 %description
 %{summary}
 
 %prep
-%setup -q
+%setup
 
 %build
 # Empty section.
 
 %install
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-mkdir -p -m0755 $RPM_BUILD_ROOT%{_bindir}
-install -m 0755 dockerveth $RPM_BUILD_ROOT%{_bindir}/
+pwd
+ls
+install -m 0755 usr/bin/dockerveth %{_bindir}/dockerveth
 
 %check
 # Empty section.
 
-%clean
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-
-
 %files
-%defattr(-,root,root,-)
-%{_bindir}/%{name}
+%doc README.md
+%{_bindir}/dockerveth
 
 %changelog
 * Mon Oct 23 2017 Micah Culpepper <micahculpepper@gmail.com>
