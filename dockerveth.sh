@@ -53,14 +53,33 @@ get_container_data () {
     docker ps --format '{{.ID}} {{.Names}}' "$@"
 }
 
+#get_veth () {
+#    # Get the host veth interface attached to a container.
+#    # Input: docker container ID; also needs $dockerveth__addrs
+#    # Output: the veth name, like "veth6638cfa"
+#    c_if_index=$(get_container_if_index "$1")
+#    a="${dockerveth__addrs%%@if${c_if_index}:*}"
+#    b="${a##*${NL}}"
+#    printf "${b#* }"
+#}
 get_veth () {
     # Get the host veth interface attached to a container.
     # Input: docker container ID; also needs $dockerveth__addrs
     # Output: the veth name, like "veth6638cfa"
-    c_if_index=$(get_container_if_index "$1")
-    a="${dockerveth__addrs%%@if${c_if_index}:*}"
-    b="${a##*${NL}}"
-    printf "${b#* }"
+    c_if_indices=$(get_container_if_indices "$1")
+    full_len="${#dockerveth__addrs}"
+    veth="not_found"
+    for i in $c_if_indices; do
+        match="${dockerveth__addrs%%@if${i}:*}"
+        if [ "${#match}" = "${full_len}" ]; then
+            continue
+        else
+            b="${match##*${NL}}"
+            veth="${b#* }"
+            break
+        fi
+    done
+    printf "${veth}"
 }
 
 get_container_if_index () {
@@ -71,6 +90,24 @@ get_container_if_index () {
     ip_netns_export "$c_pid"
     ils=$(ip netns exec "ns-${c_pid}" ip link show type veth)
     printf "${ils%%:*}"
+}
+
+get_container_if_indices () {
+    # Get the index number of a docker container's veth interfaces (typically eth0)
+    # Input: the container ID
+    # Output: The index number(s), like "42\n44\n"
+    c_pid=$(get_pid "$1")
+    ip_netns_export "$c_pid"
+    ils=$(ip netns exec "ns-${c_pid}" ip link show type veth)
+    indices=""
+    for line in $ils; do
+        m1="${ils%%:*}"
+        m2="${ils%% *}"
+        if [ "${m1}:" = "$m2" ]; then
+            indices="${indices}${m1}${NL}"
+        fi
+    done
+    printf "${indices}"
 }
 
 ip_netns_export () {
