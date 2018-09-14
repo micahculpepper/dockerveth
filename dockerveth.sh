@@ -20,7 +20,8 @@
 # DECLARE CONSTANTS #
 #####################
 
-NL=$'\n'
+NL="
+"
 
 ####################
 # DEFINE FUNCTIONS #
@@ -59,7 +60,7 @@ get_veth () {
     c_if_index=$(get_container_if_index "$1")
     a="${dockerveth__addrs%%@if${c_if_index}:*}"
     b="${a##*${NL}}"
-    printf "${b#* }"
+    printf %s "${b#* }"
 }
 
 get_container_if_index () {
@@ -69,7 +70,7 @@ get_container_if_index () {
     c_pid=$(get_pid "$1")
     ip_netns_export "$c_pid"
     ils=$(ip netns exec "ns-${c_pid}" ip link show type veth)
-    printf "${ils%%:*}"
+    printf %s "${ils%%:*}"
 }
 
 ip_netns_export () {
@@ -99,7 +100,7 @@ make_row () {
     id="${1}"
     name="${2}"
     veth=$(get_veth "$id")
-    printf "${id}\t${veth}\t${name}"
+    printf '%s\t%s\t%s' "${id}" "${veth}" "${name}"
 }
 
 make_table () {
@@ -107,11 +108,11 @@ make_table () {
     # Input: raw data rows, like `c26682fe4545 friendly-name`
     # Output: A multi-line string consisting of rows from `make_row`. Does not
     # contain table column headers.
-    for i in $@; do
+    for i do
         id="${i%% *}"
         name="${i#* }"
         r=$(make_row "$id" "$name")
-        printf "${r}\n"
+        printf '%s\n' "${r}"
     done
 }
 
@@ -137,8 +138,8 @@ esac
 set -e
 container_data=$(get_container_data "$@")
 dockerveth__addrs="$(ip address show)"
-table=$(IFS="$NL"; make_table $container_data)
+table=$(IFS="$NL"; make_table "$container_data")
 if [ -t 1 ]; then
     printf "CONTAINER ID\tVETH       \tNAMES\n"
 fi
-printf "${table}\n"
+printf '%s\n' "${table}"
