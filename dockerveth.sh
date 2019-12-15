@@ -101,8 +101,8 @@ get_container_if_indices () {
     ils=$(ip netns exec "ns-${c_pid}" ip link show type veth)
     indices=""
     for line in $ils; do
-        m1="${ils%%:*}"
-        m2="${ils%% *}"
+        m1="${line%%:*}"
+        m2="${line%% *}"
         if [ "${m1}:" = "$m2" ]; then
             indices="${indices}${m1}${NL}"
         fi
